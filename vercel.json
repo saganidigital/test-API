@@ -26,6 +26,8 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.js" },
     { "source": "/downloads/(.*)", "destination": "/api/index.js" },
+    { "source": "/favicon.ico", "destination": "/frontend/favicon.ico" },
+    { "source": "/favicon.svg", "destination": "/frontend/favicon.svg" },
     { "source": "/admin", "destination": "/frontend/admin.html" },
     { "source": "/auth", "destination": "/frontend/auth.html" },
     { "source": "/css/(.*)", "destination": "/frontend/css/$1" },
