@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Authentication | Bcrypt Protected Access</title>
+  <meta name="description" content="Secure login and account registration backed by 12-round bcrypt password hashing and SSMS 2022.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+  <!-- Simple Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">⚡</div>
+        <span>NEXUS<span style="color: var(--accent-cyan);">SOFT</span></span>
+        <span class="brand-badge">SSMS 2022</span>
+      </a>
+      <a href="index.html" class="btn btn-secondary btn-sm">
+        ← Back to Storefront
+      </a>
+    </div>
+  </header>
+
+  <!-- Auth Card Container -->
+  <main class="container" style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
+    <div style="width: 100%; max-width: 480px; background: var(--bg-card); backdrop-filter: var(--glass-blur); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-card);">
+      
+      <!-- Security Badge -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-emerald); font-weight: 700; background: rgba(0, 255, 170, 0.1); border: 1px solid var(--accent-emerald); padding: 0.2rem 0.6rem; border-radius: var(--radius-full);">
+          🛡️ BCRYPT 12-SALT ENCRYPTION
+        </span>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+          SSMS 2022 DB
+        </span>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div style="display: flex; gap: 0.75rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
+        <button id="auth-tab-login" class="cat-pill active" onclick="switchMode('login')">
+          Sign In
+        </button>
+        <button id="auth-tab-register" class="cat-pill" onclick="switchMode('register')">
+          Create Account
+        </button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="login-form">
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.35rem;">Welcome Back</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Authenticate with your email and password. Your password will be verified against the stored bcrypt hash.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="login-email" class="form-label">Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="customer@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password" class="form-label">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.5rem;">
+          Sign In to Account
+        </button>
+
+        <!-- Fast Demo Buttons -->
+        <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle);">
+          <div style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: 0.75rem; text-align: center;">
+            TEST WITH PRE-CONFIGURED DEMO ACCOUNTS:
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button type="button" class="btn btn-secondary btn-sm" style="flex: 1;" data-demo-login="customer">
+              👤 Demo Customer
+            </button>
+            <button type="button" class="btn btn-purple btn-sm" style="flex: 1;" data-demo-login="admin">
+              👑 Demo Admin
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="register-form" style="display: none;">
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.35rem;">Create Account</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Your credentials are protected with maximum cryptographic security.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-name" class="form-label">Full Name</label>
+          <input type="text" id="reg-name" class="form-control" placeholder="Jane Doe" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-email" class="form-label">Email Address</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="jane@company.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-password" class="form-label">Password</label>
+          <input type="password" id="reg-password" class="form-control" placeholder="Create high-security password" required>
+          
+          <div class="strength-meter-bar">
+            <div id="pass-strength-fill" class="strength-fill"></div>
+          </div>
+          <div id="pass-strength-text" class="strength-text">Strength: None</div>
+        </div>
+
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5;">
+          🔒 Password is never stored in plain text. It is processed with <strong>12-round bcrypt salt</strong> before writing to the database.
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+          Create Protected Account
+        </button>
+      </form>
+
+    </div>
+  </main>
+
+
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    function switchMode(mode) {
+      const loginTab = document.getElementById('auth-tab-login');
+      const regTab = document.getElementById('auth-tab-register');
+      const loginForm = document.getElementById('login-form');
+      const regForm = document.getElementById('register-form');
+
+      if (mode === 'login') {
+        loginTab.classList.add('active');
+        regTab.classList.remove('active');
+        loginForm.style.display = 'block';
+        regForm.style.display = 'none';
+      } else {
+        regTab.classList.add('active');
+        loginTab.classList.remove('active');
+        regForm.style.display = 'block';
+        loginForm.style.display = 'none';
+      }
+    }
+
+    // Auto-select mode from query param ?mode=register
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'register') {
+      switchMode('register');
+    }
+  </script>
+</body>
+</html>

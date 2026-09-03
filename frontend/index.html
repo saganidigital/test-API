@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Software Store | SSMS 2022 API-Driven E-Commerce</title>
+  <meta name="description" content="Next-generation digital software marketplace powered by Microsoft SQL Server 2022 RESTful APIs with cryptographic password hashing and real-time license delivery.">
+  <meta property="og:title" content="Nexus Software Store | Secure API-Driven E-Commerce">
+  <meta property="og:description" content="Every button triggers a secure REST API connected to SQL Server 2022 with bcrypt hashing and JWT authentication.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" id="nav-brand">
+        <div class="brand-icon">⚡</div>
+        <span>NEXUS<span style="color: var(--accent-cyan);">SOFT</span></span>
+        <span class="brand-badge">SSMS 2022</span>
+      </a>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button class="hamburger-btn" id="hamburger-toggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav>
+        <ul class="nav-links" id="nav-links-list">
+          <li>
+            <a href="#catalog" class="nav-link active" id="nav-link-catalog">
+              <span>🖥</span> Software Catalog
+            </a>
+          </li>
+          <li>
+            <a href="#locker" class="nav-link" id="nav-link-locker">
+              <span>🔐</span> My Software Locker
+            </a>
+          </li>
+          <li>
+            <a href="/api/docs" target="_blank" class="nav-link" id="nav-link-swagger">
+              <span>📜</span> Swagger API
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Shopping Cart Trigger -->
+        <button class="btn btn-secondary btn-sm cart-btn" id="btn-open-cart" aria-label="View Shopping Cart">
+          <span>🛒 Cart</span>
+          <span class="cart-count" id="cart-badge">0</span>
+        </button>
+
+        <!-- User Authentication Actions -->
+        <div id="nav-user-container">
+          <!-- Populated by auth.js -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container">
+
+    <!-- CATALOG SECTION (Default View) -->
+    <section id="catalog-section">
+
+      <!-- Hero Showcase -->
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-tag">
+              <span class="pulse-dot"></span>
+              LIVE DATABASE CONNECTION: SSMS 2022
+            </div>
+            <h1 class="hero-title">
+              Engineered Software.<br>
+              <span class="hero-title-gradient">Driven by Secure APIs.</span>
+            </h1>
+            <p class="hero-subtitle">
+              Every button triggers a secure backend API connected to Microsoft SQL Server 2022. 
+              Protected with 12-round bcrypt password hashing, Helmet.js security headers, rate limiting, and zero exposed database code.
+            </p>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              <a href="#catalog" class="btn btn-primary btn-lg">
+                Browse Software Catalog
+              </a>
+              <button class="btn btn-outline btn-lg" id="btn-view-api-specs">
+                🔍 View API Specs
+              </button>
+            </div>
+
+            <!-- Security Stack Badges -->
+            <div class="hero-security-badges">
+              <div class="security-badge">🔒 Bcrypt 12-Salt</div>
+              <div class="security-badge">🛡️ Helmet.js Headers</div>
+              <div class="security-badge">⚡ Rate Limiting</div>
+              <div class="security-badge">🔑 JWT Auth</div>
+              <div class="security-badge">🗄️ SSMS 2022</div>
+              <div class="security-badge">📝 Parameterized SQL</div>
+            </div>
+
+            <!-- Live API Activity Ticker -->
+            <div class="api-ticker" id="api-ticker">
+              <div class="api-ticker-header">
+                <div class="api-ticker-title">
+                  <span class="pulse-dot"></span>
+                  LIVE API ACTIVITY
+                </div>
+                <span style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted);" id="api-ticker-count">0 requests</span>
+              </div>
+              <div class="api-ticker-body" id="api-ticker-body">
+                <div style="color: var(--text-muted); text-align: center; padding: 0.75rem;">Waiting for API calls...</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Catalog Controls: Search, Sort, Category Pills -->
+      <section id="catalog" class="catalog-controls">
+        <div class="search-sort-row">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" class="search-input" placeholder="Search softwares, tools, platforms, or versions..." aria-label="Search software products">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <label for="sort-select" style="font-size: 0.88rem; color: var(--text-muted); font-weight: 500;">Sort By:</label>
+            <select id="sort-select" class="sort-select" aria-label="Sort software products">
+              <option value="featured">Featured First</option>
+              <option value="rating">Top Customer Rated</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="name">Alphabetical</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dynamic Category Pills from DB -->
+        <div id="category-pills" class="category-pills" role="tablist" aria-label="Software Categories">
+          <button class="cat-pill active">Loading Categories...</button>
+        </div>
+      </section>
+
+      <!-- Software Products Grid -->
+      <section id="products-grid" class="products-grid" aria-label="Software Products Catalog">
+        <!-- Injected dynamically by app.js via /api/products -->
+      </section>
+
+    </section>
+
+    <!-- CUSTOMER SOFTWARE LOCKER SECTION (Hidden by default, shown on tab click) -->
+    <section id="locker-section" class="locker-section" style="display: none;">
+      <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span style="font-family: var(--font-mono); color: var(--accent-cyan); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+            SECURE REPOSITORY
+          </span>
+          <h2 style="font-size: 2.2rem; font-weight: 900; margin-top: 0.25rem;">My Software Locker</h2>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">
+            Access your delivered software binaries, cryptographic license keys, and activation records directly from SQL Server.
+          </p>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" onclick="showCatalogSection()">
+          ← Back to Catalog
+        </button>
+      </div>
+
+      <div id="locker-orders-container">
+        <!-- Injected dynamically by app.js via /api/orders/my-orders -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PREMIUM FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand Column -->
+        <div>
+          <a href="index.html" class="brand-logo" style="margin-bottom: 0.5rem;">
+            <div class="brand-icon">⚡</div>
+            <span>NEXUS<span style="color: var(--accent-cyan);">SOFT</span></span>
+          </a>
+          <p class="footer-brand-desc">
+            A full-stack educational software e-commerce platform demonstrating secure REST API architecture with Microsoft SQL Server 2022.
+          </p>
+          <div class="footer-tech-badges">
+            <span class="tech-badge">🗄️ SQL Server 2022</span>
+            <span class="tech-badge">🟢 Node.js</span>
+            <span class="tech-badge">⚡ Express.js</span>
+            <span class="tech-badge">🔒 bcrypt</span>
+            <span class="tech-badge">🔑 JWT</span>
+            <span class="tech-badge">🛡️ Helmet.js</span>
+          </div>
+        </div>
+
+        <!-- Platform Links -->
+        <div>
+          <h4 class="footer-heading">Platform</h4>
+          <div class="footer-links">
+            <a href="#catalog">🖥 Software Catalog</a>
+            <a href="#" id="footer-locker-link">🔐 Software Locker</a>
+            <a href="/api/docs" target="_blank">📜 Swagger API Docs</a>
+            <a href="/api/health" target="_blank">💚 Health Check</a>
+          </div>
+        </div>
+
+        <!-- Security Links -->
+        <div>
+          <h4 class="footer-heading">Security</h4>
+          <div class="footer-links">
+            <a href="#">🔒 Bcrypt Hashing</a>
+            <a href="#">🛡️ Helmet Headers</a>
+            <a href="#">⚡ Rate Limiting</a>
+            <a href="#">🔑 JWT Tokens</a>
+          </div>
+        </div>
+
+        <!-- Architecture Links -->
+        <div>
+          <h4 class="footer-heading">Architecture</h4>
+          <div class="footer-links">
+            <a href="#">📡 REST API</a>
+            <a href="#">🗄️ SSMS 2022</a>
+            <a href="#">📝 Parameterized SQL</a>
+            <a href="#">📋 Audit Logging</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
+      <div class="footer-bottom">
+        <span class="footer-copyright">
+          © 2026 NexusSoft — Educational Software Commerce Platform
+        </span>
+        <div class="footer-status">
+          <span class="pulse-dot" style="width: 6px; height: 6px;"></span>
+          All Systems Operational
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SHOPPING CART SLIDE-OUT DRAWER -->
+  <div id="cart-overlay" class="cart-drawer-overlay"></div>
+  <aside id="cart-drawer" class="cart-drawer" aria-label="Shopping Cart">
+    <div class="cart-header">
+      <h3 style="font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+        <span>🛒</span> Your Cart
+      </h3>
+      <button class="modal-close-btn" id="btn-close-cart" aria-label="Close cart">
+        ✕
+      </button>
+    </div>
+
+    <div id="cart-items-container" class="cart-items-list">
+      <!-- Injected dynamically by app.js via /api/cart -->
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Order Total:</span>
+        <span id="cart-total" class="cart-total-amount">$0.00</span>
+      </div>
+      <button id="btn-checkout" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 1rem;">
+        Complete Order via API
+      </button>
+      <div style="text-align: center; margin-top: 0.75rem; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+        Executes POST /api/orders/checkout
+      </div>
+    </div>
+  </aside>
+
+  <!-- PRODUCT SPECIFICATION MODAL DIALOG -->
+  <dialog id="product-modal" closedby="any" aria-labelledby="product-modal-title">
+    <div class="modal-header">
+      <h3 id="product-modal-title" class="modal-title">
+        <span>⚡</span> Software Specifications
+      </h3>
+      <button class="modal-close-btn" onclick="document.getElementById('product-modal').close()" aria-label="Close modal">
+        ✕
+      </button>
+    </div>
+    <div id="product-modal-body">
+      <!-- Injected dynamically -->
+    </div>
+  </dialog>
+
+  <!-- AUTHENTICATION MODAL DIALOG (Sign In / Sign Up) -->
+  <dialog id="auth-modal" closedby="any" aria-labelledby="auth-modal-title">
+    <div class="modal-header">
+      <div style="display: flex; gap: 1rem;">
+        <button id="auth-tab-login" class="cat-pill active" onclick="openAuthModal('login')">Sign In</button>
+        <button id="auth-tab-register" class="cat-pill" onclick="openAuthModal('register')">Create Account</button>
+      </div>
+      <button class="modal-close-btn" onclick="document.getElementById('auth-modal').close()" aria-label="Close dialog">
+        ✕
+      </button>
+    </div>
+
+    <!-- Sign In Form -->
+    <form id="login-form">
+      <div class="form-group">
+        <label for="login-email" class="form-label">Email Address</label>
+        <input type="email" id="login-email" class="form-control" placeholder="developer@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="login-password" class="form-label">Password</label>
+        <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+        Sign In to Account
+      </button>
+
+      <!-- Fast Demo Switcher -->
+      <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle);">
+        <div style="font-size: 0.78rem; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: 0.6rem; text-align: center;">
+          🎓 EDUCATIONAL DEMO ACCOUNTS:
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn-secondary btn-sm" style="flex: 1;" data-demo-login="customer">
+            👤 Demo Customer
+          </button>
+          <button type="button" class="btn btn-purple btn-sm" style="flex: 1;" data-demo-login="admin">
+            👑 Demo Admin
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Sign Up Form (with Real-time Bcrypt Security Analyzer) -->
+    <form id="register-form" style="display: none;">
+      <div class="form-group">
+        <label for="reg-name" class="form-label">Full Name</label>
+        <input type="text" id="reg-name" class="form-control" placeholder="Alex Morgan" required>
+      </div>
+
+      <div class="form-group">
+        <label for="reg-email" class="form-label">Email Address</label>
+        <input type="email" id="reg-email" class="form-control" placeholder="alex@company.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="reg-password" class="form-label">Password</label>
+        <input type="password" id="reg-password" class="form-control" placeholder="Create high-entropy password" required>
+        
+        <!-- Bcrypt Security Meter -->
+        <div class="strength-meter-bar">
+          <div id="pass-strength-fill" class="strength-fill"></div>
+        </div>
+        <div id="pass-strength-text" class="strength-text">Strength: None</div>
+      </div>
+
+      <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        🛡️ Passwords are encrypted on the server with <strong>12-round bcrypt cryptographic salt</strong> before writing to SSMS 2022.
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%;">
+        Create Protected Account
+      </button>
+    </form>
+  </dialog>
+
+  <!-- ENDPOINTS MODAL -->
+  <dialog id="endpoints-modal" closedby="any" aria-labelledby="endpoints-modal-title">
+    <div class="modal-header">
+      <h3 id="endpoints-modal-title" class="modal-title">
+        <span>📡</span> API Endpoint Directory
+      </h3>
+      <button class="modal-close-btn" onclick="document.getElementById('endpoints-modal').close()" aria-label="Close modal">
+        ✕
+      </button>
+    </div>
+    <div id="endpoints-modal-body">
+      <!-- Injected dynamically -->
+    </div>
+  </dialog>
+
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

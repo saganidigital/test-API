@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal | Software Delivery & Database Management</title>
+  <meta name="description" content="Administrator Control Center for software order fulfillment, license issuance, and SSMS 2022 database operations.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Admin Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="admin.html" class="brand-logo">
+        <div class="brand-icon" style="background: linear-gradient(135deg, var(--accent-purple), #ff0077);">👑</div>
+        <span>NEXUS<span style="color: var(--accent-purple);">ADMIN</span></span>
+        <span class="brand-badge" style="border-color: var(--accent-purple); color: var(--accent-purple);">CONTROL CENTER</span>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="index.html" class="btn btn-secondary btn-sm">
+          ← View Storefront
+        </a>
+        <a href="/api/docs" target="_blank" class="btn btn-purple btn-sm">
+          📜 Swagger API
+        </a>
+        <button id="btn-refresh-stats" class="btn btn-outline btn-sm">
+          ↻ Refresh Database
+        </button>
+        <div style="display: flex; align-items: center; gap: 0.75rem; border-left: 1px solid var(--border-subtle); padding-left: 1rem;">
+          <span style="font-size: 0.88rem; font-weight: 600;" id="admin-user-name">Administrator</span>
+          <button class="btn btn-ghost btn-sm" onclick="window.api.logout()">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Layout Grid -->
+  <div class="container admin-grid">
+
+    <!-- Left Navigation Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-nav-item active" data-tab="orders">
+        <span>📦</span>
+        <span>Orders & Delivery</span>
+      </div>
+      <div class="admin-nav-item" data-tab="products">
+        <span>💻</span>
+        <span>Software Products</span>
+      </div>
+      <div class="admin-nav-item" data-tab="licenses">
+        <span>🔑</span>
+        <span>Issued Licenses</span>
+      </div>
+      <div class="admin-nav-item" data-tab="users">
+        <span>👥</span>
+        <span>User Accounts</span>
+      </div>
+      <div class="admin-nav-item" data-tab="logs">
+        <span>📜</span>
+        <span>Audit Trail Logs</span>
+      </div>
+    </aside>
+
+    <!-- Main Admin Content Area -->
+    <main class="admin-content">
+
+      <!-- Real-time Database KPI Stats -->
+      <section class="stats-cards-grid">
+        <div class="stat-card">
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Total Revenue</div>
+          <div class="stat-val" id="stat-revenue" style="color: var(--accent-cyan);">$0.00</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Total Orders</div>
+          <div class="stat-val" id="stat-orders">0</div>
+        </div>
+        <div class="stat-card" style="border-color: rgba(255, 170, 0, 0.4);">
+          <div style="font-size: 0.82rem; color: var(--accent-amber); text-transform: uppercase; font-weight: 700;">Pending Deliveries</div>
+          <div class="stat-val" id="stat-pending" style="color: var(--accent-amber);">0</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Delivered Softwares</div>
+          <div class="stat-val" id="stat-delivered" style="color: var(--accent-emerald);">0</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Active Products</div>
+          <div class="stat-val" id="stat-products">0</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Registered Customers</div>
+          <div class="stat-val" id="stat-customers">0</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Active Licenses</div>
+          <div class="stat-val" id="stat-licenses" style="color: var(--accent-purple);">0</div>
+        </div>
+      </section>
+
+      <!-- TAB 1: ORDERS & SOFTWARE DELIVERY -->
+      <section id="tab-content-orders">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 800;">Order Fulfillment & License Delivery</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+              Clicking <strong>Deliver Software</strong> triggers the delivery API: generates unique cryptographic serial keys and activates instant customer download in SQL Server.
+            </p>
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Software Items</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Order Date</th>
+                <th>Delivery Action</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <!-- Populated dynamically via /api/admin/orders -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 2: SOFTWARE PRODUCTS CATALOG MANAGEMENT -->
+      <section id="tab-content-products" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 800;">Software Catalog Management</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+              Add, update, or archive software products directly in the SSMS 2022 database.
+            </p>
+          </div>
+          <button id="btn-open-add-product" class="btn btn-primary btn-sm">
+            + Register New Software
+          </button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Software Name</th>
+                <th>Version</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Platform</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-table-body">
+              <!-- Populated dynamically via /api/products -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: ISSUED LICENSES -->
+      <section id="tab-content-licenses" style="display: none;">
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 800;">Issued Software Licenses</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Real-time cryptographic key ledger stored in the SoftwareLicenses table.
+          </p>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Cryptographic License Key</th>
+                <th>Software Product</th>
+                <th>Customer Email</th>
+                <th>Order #</th>
+                <th>Status</th>
+                <th>Issued At</th>
+              </tr>
+            </thead>
+            <tbody id="licenses-table-body">
+              <!-- Populated dynamically via /api/admin/licenses -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: USERS DIRECTORY -->
+      <section id="tab-content-users" style="display: none;">
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 800;">Registered User Accounts</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            User profiles stored with 12-round bcrypt hashed credentials in the Users table.
+          </p>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Full Name</th>
+                <th>Email Address</th>
+                <th>Role</th>
+                <th>Created Date</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <!-- Populated dynamically via /api/admin/users -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: AUDIT LOGS -->
+      <section id="tab-content-logs" style="display: none;">
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 800;">Database Audit Trail</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Live API activity logged automatically to the AuditLogs table in SSMS 2022.
+          </p>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Action</th>
+                <th>API Endpoint</th>
+                <th>User</th>
+                <th>Payload Meta</th>
+              </tr>
+            </thead>
+            <tbody id="logs-table-body">
+              <!-- Populated dynamically via /api/admin/logs -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Mobile Sidebar Toggle -->
+  <button class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+
+  <!-- ADD PRODUCT MODAL -->
+  <dialog id="add-product-modal" closedby="any" style="max-width: 650px;">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <span>💻</span> Register New Software Product
+      </h3>
+      <button class="modal-close-btn" onclick="document.getElementById('add-product-modal').close()">✕</button>
+    </div>
+
+    <form id="add-product-form">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="new-prod-name" class="form-label">Software Name *</label>
+          <input type="text" id="new-prod-name" class="form-control" placeholder="DevOps Automator Pro" required>
+        </div>
+
+        <div class="form-group">
+          <label for="new-prod-cat" class="form-label">Category *</label>
+          <select id="new-prod-cat" class="form-control" required>
+            <option value="1">Cybersecurity & Protection</option>
+            <option value="2">Developer & Coding Tools</option>
+            <option value="3">Cloud, Server & DevOps</option>
+            <option value="4">Creative & UI/UX Design</option>
+            <option value="5">System Utilities & Performance</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="new-prod-tagline" class="form-label">Marketing Tagline</label>
+        <input type="text" id="new-prod-tagline" class="form-control" placeholder="Automate build and deployment pipelines with zero effort">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="new-prod-version" class="form-label">Version *</label>
+          <input type="text" id="new-prod-version" class="form-control" placeholder="v2.5.0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="new-prod-price" class="form-label">Price ($) *</label>
+          <input type="number" step="0.01" id="new-prod-price" class="form-control" placeholder="79.99" required>
+        </div>
+
+        <div class="form-group">
+          <label for="new-prod-orig-price" class="form-label">Original Price ($)</label>
+          <input type="number" step="0.01" id="new-prod-orig-price" class="form-control" placeholder="99.99">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="new-prod-platform" class="form-label">Platform *</label>
+          <input type="text" id="new-prod-platform" class="form-control" placeholder="Windows 11, macOS, Linux" required>
+        </div>
+
+        <div class="form-group">
+          <label for="new-prod-lic" class="form-label">License Type *</label>
+          <input type="text" id="new-prod-lic" class="form-control" placeholder="Perpetual Commercial" required>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="new-prod-size" class="form-label">Package Size</label>
+          <input type="text" id="new-prod-size" class="form-control" placeholder="180 MB">
+        </div>
+        <div class="form-group">
+          <label for="new-prod-img" class="form-label">Image URL</label>
+          <input type="text" id="new-prod-img" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="new-prod-desc" class="form-label">Software Description *</label>
+        <textarea id="new-prod-desc" class="form-control" rows="3" placeholder="Detailed architectural software description..." required></textarea>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+        <input type="checkbox" id="new-prod-featured">
+        <label for="new-prod-featured" style="font-size: 0.9rem; cursor: pointer;">Feature on homepage showcase</label>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('add-product-modal').close()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Register Software Product</button>
+      </div>
+    </form>
+  </dialog>
+
+
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script>
+    // Admin mobile sidebar toggle
+    const sidebarToggle = document.getElementById('admin-sidebar-toggle');
+    const adminSidebar = document.querySelector('.admin-sidebar');
+    if (sidebarToggle && adminSidebar) {
+      sidebarToggle.addEventListener('click', () => {
+        adminSidebar.classList.toggle('mobile-open');
+      });
+      // Close sidebar when clicking a nav item on mobile
+      adminSidebar.querySelectorAll('.admin-nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          if (window.innerWidth <= 992) {
+            adminSidebar.classList.remove('mobile-open');
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>

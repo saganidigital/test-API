@@ -1,0 +1,32 @@
+{
+  "name": "software-ecommerce-backend",
+  "version": "1.0.0",
+  "description": "REST API Backend for Software E-Commerce with SQL Server / SSMS 2022",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "ecommerce",
+    "software",
+    "sqlserver",
+    "ssms",
+    "api",
+    "bcrypt"
+  ],
+  "author": "Antigravity",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "msnodesqlv8": "^5.3.0",
+    "mssql": "^11.0.1",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
