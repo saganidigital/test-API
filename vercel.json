@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "outputDirectory": "frontend",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/auth", "destination": "/auth.html" },
+    { "source": "/index", "destination": "/index.html" }
+  ]
+}
